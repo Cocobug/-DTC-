@@ -21,22 +21,30 @@
 #----------------------+
 # Initialisation       |
 #- - - - - - - - - - - +
-import ConfigParser,os
-import cherrypy
-
+from bottle import Bottle, run, static_file, route, abort, redirect
+from bottle import jinja2_view as view, jinja2_template as template
 #======================+
 # Fonctions internes   |
 #----------------------+
+app = Bottle()
 
-#======================+
-# Classes              |
-#----------------------+
+@app.route('/')
+@app.route('/hello')
+def hello():
+    return "Hello World!"
 
+@app.route('/images/<filename:re:.*\.png>#')
+def send_image(filename):
+    return static_file(filename, root='/path/to/image/files', mimetype='image/png')
 
-class application:
-    @exposed
-    def index(self):
-        return "Hello world!"
-    
+@app.route('/static/<filename:path>')
+def send_static(filename):
+    return static_file(filename, root='/path/to/static/files')
 
-cherrypy.quickstart(HelloWorld())
+@app.error(404)
+def error404(error):
+    return 'Nothing here, sorry'
+
+app.debug=True
+run(app, reloader=True, host='localhost', port=8080)
+
