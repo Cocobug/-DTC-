@@ -23,32 +23,41 @@
 #- - - - - - - - - - - +
 
 import os,sys
+import markdown
 from bottle import Bottle, run, static_file, route, abort, redirect
 from bottle import jinja2_view as view, jinja2_template as template
 
 #----------------------+
 # Initialisation       |
 #- - - - - - - - - - - +
+exists=os.path.exists
 
-templates={'global':'global/global.liquid','news':'news/news.liquid'}
-css={'global':'global/global.css','news':'global/news.css'}
+PATH_PAGES='pages/'
+PATH_IMAGES='images/'
+PATH_STATIC='static/'
+
+PATH_NEWS=PATH_PAGES+'news/'
+PATH_GLOBAL=PATH_PAGES+'global/'
+
+templates={'global':PATH_GLOBAL+'global.liquid','news':PATH_GLOBAL+'news.liquid'}
+css={'global':PATH_GLOBAL+'global.css','news':PATH_GLOBAL+'news.css'}
 
 #======================+
 # Fonctions internes   |
 #----------------------+
 
 def model(category):
-	if category in templates and os.exists(templates[category]):
+	if category in templates and exists(templates[category]):
 		templates[category]
 	return templates['global']
 
 def article(filepath):
-	temp='pages/'+filepath+'.md'
-	if os.exists(temp): return temp
-	abort(404, 'Thou are weak')
+	temp=filepath+'.md'
+	if exists(temp): return temp
+	abort(404, temp+'\nThou are weak')
 
 def css(category):
-	if category in css and os.exists(css[category]):
+	if category in css and exists(css[category]):
 		return css[category]
 	return css['global']
 
@@ -63,22 +72,22 @@ app = Bottle()
 def hello():
 	return "Hello World!"
 
-@app.route('/images/<filename:re:.*\.png>#')
+@app.route(PATH_IMAGES+'<filename:re:.*\.png>#')
 def send_image(filename):
 	return static_file(filename, root='/path/to/image/files', mimetype='image/png')
 
-@app.route('/static/<filename:path>')
+@app.route(PATH_STATIC+'<filename:path>')
 def send_static(filename):
 	return static_file(filename, root='/path/to/static/files')
 
-@app.route('/news/<category>/<int:date>/name')
-def news(date,name):
+@app.route('/news/<dd>/<mm>/<aa>/<name>')
+def news(dd,mm,aa,name):
 	pagename=name
-	header=''
-	footer=''
-	content='/news/'+category+'/'+date+'-'+name'
-	with open ar('news') as article: text=article.read()
-	template(model('news'),header=deader,footer=footer,content=text)
+	date=dd+mm+aa
+	path=PATH_NEWS+date+'-'+name	
+	with open(article(path)) as text: html=markdown.markdown(text.read())
+	print html
+	return template(model('news'),title=pagename,content=html)
 
 app.debug=True
 run(app, reloader=True, host='localhost', port=8080)
