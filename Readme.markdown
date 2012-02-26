@@ -7,7 +7,7 @@ python engine.py
 ## Doc ##
 The pages are written in the nodes
 
-* .conf (inherits from globla.conf) : Links to the files
+* .conf (inherits from global.conf) : Links to the files
 * .css (default global.css) : Style
 * .liquid (default global.liquid) : The template, interpreted by Jinja2
 * 
