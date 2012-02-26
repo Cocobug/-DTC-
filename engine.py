@@ -42,6 +42,7 @@ PATH_GLOBAL=PATH_PAGES+'global/'
 templates={'global':PATH_GLOBAL+'global.liquid','news':PATH_GLOBAL+'news.liquid'}
 css={'global':PATH_GLOBAL+'global.css','news':PATH_GLOBAL+'news.css'}
 
+
 #======================+
 # Fonctions internes   |
 #----------------------+
@@ -67,28 +68,33 @@ def css(category):
 
 app = Bottle()
 
-@app.route('/')
 @app.route('/hello')
 def hello():
-	return "Hello World!"
+	return template(model('global'),title="Hello World!",content="Hello World!")
 
-@app.route(PATH_IMAGES+'<filename:re:.*\.png>#')
+@app.route('/'+PATH_IMAGES+'<filename:re:.*\.png>')
 def send_image(filename):
-	return static_file(filename, root='/path/to/image/files', mimetype='image/png')
+	return static_file(filename, root="./"+PATH_IMAGES, mimetype='image/png')
 
-@app.route(PATH_STATIC+'<filename:path>')
+@app.route('/'+PATH_STATIC+'<filename:path>')
 def send_static(filename):
-	return static_file(filename, root='/path/to/static/files')
+	return static_file(filename, root='./'+PATH_STATIC)
 
 @app.route('/news/<dd>/<mm>/<aa>/<name>')
 def news(dd,mm,aa,name):
 	pagename=name
-	date=dd+mm+aa
+	date=dd.zfill(2)+mm.zfill(2)+aa.zfill(2)
 	path=PATH_NEWS+date+'-'+name	
 	with open(article(path)) as text: html=markdown.markdown(text.read())
-	print html
 	return template(model('news'),title=pagename,content=html)
 
+@app.route('/')
+def moo(): redirect('/index.zwf')
+
+@app.route('/index.zwf')
+def index():
+	return news("10","08","91","Moo")
+
 app.debug=True
-run(app, reloader=True, host='localhost', port=8080)
+run(app, reloader=True, host='192.168.1.17', port=8080)
 
