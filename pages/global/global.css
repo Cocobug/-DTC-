@@ -1,13 +1,38 @@
-main {
-	background-image: url(Pattern.png);
-}
-
-header {
+title {
 	color: #BC46B3;
 	font: 16pt "Manga Temple";
 }
 
 body {
+	background: #5e5e5e url(../../images/Pattern.png) repeat scroll;
+	margin: 0;
+	padding: 0;
+}
+
+#buttons {
+	padding-right: 30px;
+	padding-top: 20px;
+	padding-left: 30px;
+}
+
+h1 {
 	font: 16pt "Manga Temple";
 	color: #EF78E3;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+h2 {
+	font: 12pt "Manga Temple";
+	color: #EF78E3;
+}
+
+p {
+	color: #ffffff;
+	font-family: chalkboard;
+}
+
+ul {
+	color: #ffffff;
+	font-family: chalkboard;
 }
